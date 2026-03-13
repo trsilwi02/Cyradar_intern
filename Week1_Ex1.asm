@@ -1,6 +1,7 @@
 global main
 extern printf
 extern scanf
+extern system
 
 section .data
 msg1 db "Nhap so nhi phan thu nhat: ", 0
@@ -10,6 +11,7 @@ msg3 db "Tong cua hai so la: %lld", 10, 0
 errormsg db "Input khong hop le!", 10, 0
 
 str_format db "%s", 0
+pause_cmd db "pause", 0
 
 buf1 times 64 db 0 ; vì là string nên cần buf để chứa đầu vào
 buf2 times 64 db 0
@@ -127,13 +129,19 @@ main:
     xor rax, rax
     call printf
     
-    add rsp, 40             ; Dọn dẹp stack
-    ret                     ; Thoát thành công
+    jp .exit_program ; nhảy tới exit để tránh in lỗi nếu có
 
 ; --- XỬ LÝ LỖI INPUT ---
 .input_error:
     lea rcx, [rel errormsg]  
     xor rax, rax
     call printf
-    add rsp, 40             ; Dọn dẹp stack trước khi thoát
-    ret                     ; Thoát do lỗi
+
+; --- Thoát chương trình ---
+.exit_program:
+    lea rcx, [rel pause_cmd]
+    xor rax, rax
+    call system
+
+    add rsp, 40
+    ret
