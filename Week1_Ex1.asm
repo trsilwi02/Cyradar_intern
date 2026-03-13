@@ -21,11 +21,6 @@ num2 dq 0
 
 section .text
 
-; =========================
-; ham convert binary -> int
-; RCX = dia chi chuoi
-; tra ket qua trong RAX
-; =========================
 bin_to_int:
     xor rax, rax ; reset thanh ghi rax
     mov rsi, rcx 

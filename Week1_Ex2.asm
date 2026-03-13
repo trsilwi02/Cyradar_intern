@@ -1,14 +1,17 @@
 global main
 extern printf
 extern scanf
+extern system
 
 section .data
-    msg1 db "Nhap so thu nhat: ", 0
-    msg2 db "Nhap so thu hai: ", 0
+    msg1 db "Nhap so thu nhat (-32768 to 32767): ", 0
+    msg2 db "Nhap so thu hai (-32768 to 32767): ", 0
     errormsg db "Input khong hop le!", 0
     msg_out db "Tong cua hai so la: %d", 10, 0
     
     fmt_in db "%lld", 0       ; %hd dùng để đọc số nguyên 16-bit (short)
+
+    pause_cmd db "pause", 0
 
 section .bss
     temp_num resq 1          ; 8byte
@@ -65,6 +68,7 @@ main:
     call check_input
     test rax, rax
     jz .input_error
+
     ; Hợp lệ: Lưu vào num2
     mov ax, word [rel temp_num]
     mov word [rel num2], ax
@@ -80,12 +84,19 @@ main:
     mov edx, eax                ; Truyền tổng (đang ở eax) vào tham số thứ 2 (edx)
     xor rax, rax
     call printf
-    add rsp, 40
-    ret
+    
+    jp .exit_program
 
 .input_error:
     lea rcx, [rel errormsg]
     xor rax, rax
     call printf
+
+.exit_program:
+    ; --- Tạm dừng trước khi thoát (chỉ cần thiết nếu chạy trong môi trường console) ---
+    lea rcx, [rel pause_cmd]
+    xor rax, rax
+    call system
+
     add rsp, 40
     ret

@@ -1,11 +1,13 @@
 global main
 extern printf
 extern scanf
+extern system
 
 section .data
     msg_in db "Nhap vao mot xau (khong co dau cach): ", 0
     msg_out db "Xau dao nguoc la: %s", 10, 0
     fmt_str db "%s", 0
+    pause_cmd db "pause", 0
 
 section .bss
     str_buf resb 256        ; Cấp phát 256 byte để chứa xâu
@@ -58,6 +60,12 @@ main:
     lea rdx, [rel str_buf]
     xor rax, rax
     call printf
+
+.exit_program:
+    ; --- Tạm dừng trước khi thoát (chỉ cần thiết nếu chạy trong môi trường console) ---
+    lea rcx, [rel pause_cmd]
+    xor rax, rax
+    call system
 
     add rsp, 40
     ret
